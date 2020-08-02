@@ -21,7 +21,18 @@ public class Menu {
 
     private Boolean enabled;
 
+    //该菜单的子菜单，一级菜单下面有子菜单。
     private List<Menu> children;
+    //访问当前菜单需要的 角色（权限）
+    private List<Role> roles;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
     public Integer getId() {
         return id;
