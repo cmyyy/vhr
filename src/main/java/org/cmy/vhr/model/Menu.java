@@ -23,7 +23,7 @@ public class Menu {
 
     //该菜单的子菜单，一级菜单下面有子菜单。
     private List<Menu> children;
-    //访问当前菜单需要的 角色（权限）
+    //访问当前菜单需要的 角色（权限） 满足其中之一即可
     private List<Role> roles;
 
     public List<Role> getRoles() {

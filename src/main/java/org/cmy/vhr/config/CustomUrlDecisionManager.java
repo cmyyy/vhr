@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLOutput;
 import java.util.Collection;
 
 /**
@@ -20,7 +21,7 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
      *
      * @param authentication   当前用户
      * @param o
-     * @param collection  MyFilter中传来的 访问某请求需要的角色
+     * @param collection  CustomFilterInvocationSecurityMetadataSource中传来的 访问某请求需要的角色（从数据库中得到）
      * @throws AccessDeniedException
      * @throws InsufficientAuthenticationException
      */
@@ -43,7 +44,7 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             for (GrantedAuthority authority : authorities) {
                 if (authority.getAuthority().equals(needRole)){
-                    // 当前用户角色满足条件，正常执行下去
+                    // 当前用户角色 满足是某请求需要的角色之一 的条件时，就正常执行下去
                     return;
                 }
             }
