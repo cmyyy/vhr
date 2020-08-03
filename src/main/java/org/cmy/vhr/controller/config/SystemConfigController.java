@@ -1,4 +1,4 @@
-package org.cmy.vhr.controller;
+package org.cmy.vhr.controller.config;
 
 import org.cmy.vhr.model.Menu;
 import org.cmy.vhr.service.MenuService;
