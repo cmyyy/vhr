@@ -1,5 +1,6 @@
 package org.cmy.vhr.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cmy.vhr.model.MenuRole;
 
 public interface MenuRoleMapper {
@@ -14,4 +15,8 @@ public interface MenuRoleMapper {
     int updateByPrimaryKeySelective(MenuRole record);
 
     int updateByPrimaryKey(MenuRole record);
+
+    void deleteByRid(Integer rid);
+
+    Integer insertRecord(Integer rid, @Param("mids") Integer[] mids);
 }
