@@ -14,6 +14,11 @@
     <collection property="children" ofType="org.cmy.vhr.model.Department" select="org.cmy.vhr.mapper.DepartmentMapper.getAllDepartmentsByParentId"
     column="id"></collection>
   </resultMap>
+  <select id="getAllDepartmentsWithoutChildren" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from department;
+  </select>
   <select id="deleteDepById" statementType="CALLABLE">
     call deleteDep(#{id, mode=IN, jdbcType=INTEGER},#{result,mode=OUT, jdbcType=INTEGER})
   </select>

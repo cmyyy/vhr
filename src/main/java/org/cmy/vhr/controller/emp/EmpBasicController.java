@@ -1,0 +1,108 @@
+package org.cmy.vhr.controller.emp;
+
+
+import org.cmy.vhr.model.*;
+import org.cmy.vhr.service.*;
+import org.cmy.vhr.utils.POIUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+@RequestMapping("/employee/basic")
+public class EmpBasicController {
+
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    NationService nationService;
+    @Autowired
+    PoliticsstatusService politicsstatusService;
+    @Autowired
+    JobLevelService jobLevelService;
+    @Autowired
+    PositionService positionService;
+    @Autowired
+    DepartmentService departmentService;
+
+    @GetMapping("/")
+    public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page,
+                                          @RequestParam(defaultValue = "10") Integer size,
+                                          String keyword) {
+        return employeeService.getEmployeeByPage(page, size, keyword);
+    }
+    @PostMapping("/import")
+    public RespBean importData(MultipartFile file) throws IOException {
+        List<Employee> list = POIUtils.excel2Employee(file, nationService.getAllNations(), politicsstatusService.getAllPoliticsstatus(), departmentService.getAllDepartmentsWithoutChildren(),positionService.getAllPositions(),
+                jobLevelService.getAllJobLevels());
+        if (employeeService.addEmps(list) == list.size()){
+            return RespBean.ok("上传成功");
+        }
+        return RespBean.error("上传失败");
+    }
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportDta(){
+        List<Employee> list = ((List<Employee>) employeeService.getEmployeeByPage(null, null, null).getData());
+        return POIUtils.employee2Excel(list);
+    }
+    @PutMapping("/")
+    public RespBean updateEmp(@RequestBody Employee employee){
+        if (employeeService.updateEmp(employee)==1){
+            return RespBean.ok("更新成功");
+        }
+        return RespBean.error("更新失败");
+    }
+
+    @DeleteMapping("/{id}")
+    public RespBean deleteEmpByEid(@PathVariable Integer id){
+        if (employeeService.deleteEmpByEid(id) == 1){
+            return RespBean.ok("删除成功");
+        }
+        return RespBean.error("删除失败");
+    }
+    /**
+     * 添加雇员，下面的几个函数主要用于获取属性，在添加页面供人选择。
+     * @param employee
+     * @return
+     */
+    @PostMapping("/")
+    public RespBean addEmp(@RequestBody Employee employee){
+        if (employeeService.addEmp(employee) == 1){
+            return RespBean.ok("添加成功");
+        }
+        return RespBean.error("添加失败");
+    }
+
+    @GetMapping("/nations")
+    public List<Nation> getAllNations(){
+        return nationService.getAllNations();
+    }
+
+    @GetMapping("/politicsstatus")
+    public List<Politicsstatus> getAllPoliticsstatus(){
+        return politicsstatusService.getAllPoliticsstatus();
+    }
+    @GetMapping("/joblevels")
+    public List<JobLevel> getAllJobLevels(){
+        return jobLevelService.getAllJobLevels();
+    }
+    @GetMapping("/positions")
+    public List<Position> getAllPositions(){
+        return positionService.getAllPositions();
+    }
+    @GetMapping("/maxWorkId")
+    public RespBean maxWorkId(){
+        RespBean respBean = RespBean.build().setStatus(200)
+                .setObj(String.format("%08d", employeeService.maxWorkId() + 1));
+        return respBean;
+    }
+    @GetMapping("/deps")
+    public List<Department> getAllDepartments(){
+        return departmentService.getAllDepartments();
+    }
+}
