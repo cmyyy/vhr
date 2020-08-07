@@ -9,8 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -33,8 +34,8 @@ public class EmpBasicController {
     @GetMapping("/")
     public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page,
                                           @RequestParam(defaultValue = "10") Integer size,
-                                          String keyword) {
-        return employeeService.getEmployeeByPage(page, size, keyword);
+                                          Employee employee, Date[] beginDateScope) {
+        return employeeService.getEmployeeByPage(page, size, employee, beginDateScope);
     }
     @PostMapping("/import")
     public RespBean importData(MultipartFile file) throws IOException {
@@ -47,7 +48,7 @@ public class EmpBasicController {
     }
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportDta(){
-        List<Employee> list = ((List<Employee>) employeeService.getEmployeeByPage(null, null, null).getData());
+        List<Employee> list = ((List<Employee>) employeeService.getEmployeeByPage(null, null, null, null).getData());
         return POIUtils.employee2Excel(list);
     }
     @PutMapping("/")
